@@ -42,14 +42,43 @@ This repository provides a complete workflow to:
 ## ⚠️ IMPORTANT RULES (READ CAREFULLY)
 
 > [!WARNING]
-> - Always place the repository inside your home directory
-> - DO NOT use system directories such as `/`, `/opt`, `/usr`
-> - DO NOT modify the internal folder structure
-> - DO NOT execute development scripts with `sudo`
-> - ALWAYS initialize the environment before running commands:
+> * Always place the repository inside your home directory
+> * DO NOT use system directories such as `/`, `/opt`, `/usr`
+> * DO NOT modify the internal folder structure
+> * DO NOT execute development scripts with `sudo`
+> * ALWAYS initialize the environment before running commands:
 >   ```bash
 >   source ./0_lab_setenv
 >   ```
+> * ALWAYS add the multicast IP address route to your computer
+>   ```bash
+>   sudo ip route add 224.244.224.245 dev <network_interface>
+>   ```
+> - To find the interface
+>  ```bash
+>  ip a
+>  ```
+> * Client and server machines must be on the same subnet
+> - If using Windows Subsystem for Linux
+> + enable Hyper-V services (if not already enabled) and restart your computer
+> + run the Powershell as administrator
+> + retrievethe network interface name
+> ```bash
+> Get-NetAdapter
+> ```
+> + create bridged network
+> ```bash
+> New-VMSwitch -Name "WSL_Bridge" -NetAdapterName "Your_Adapter_Name" -AllowManagementOS $true
+> ```
+> + press WIN + R and type %USERPROFILE%
+> + modify (or create) .wslconfig file
+> ```bash
+> [wsl2]
+> networkingMode=bridged
+> vmSwitch=WSL_Bridge
+> ```
+> - If using other kinds of virtual machines (e.g., VirtualBox, VMWare, UTM, ...)
+> + Set bridged network and specify the host network interface
 
 ---
 
@@ -286,6 +315,20 @@ Inside the **vsomeip_server.json** file
 
 ### 3. Project build
 In the projects folder there are several scripts to simplify the generation and building processes.
+* **0_build_examples**: this script builds all the provided examples, i.e., rpc, event, field and rpc_struct executing, sequentially, the single steps listed below.
+```bash
+./0_build_examples
+```
+> [!WARNING]
+> This script can be easily modified to build automatically your project.
+>  * You must ensure that each application has an unique name and id
+> ```bash
+> #!/bin/bash
+> set -e
+> ./1_generate_project ServiceName ServiceFolder
+> 2_generate_cmake ServiceName ServiceFolder ServicePackage
+> ./3_build_project ServiceFolder
+>  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
 ```bash
 ./1_generate_project <ServiceName> <ServiceFolder>
@@ -303,42 +346,10 @@ In the projects folder there are several scripts to simplify the generation and 
 
 ### 4. Project execution
 For each service, SOME/IP client and SOME/IP server must run on different machines
--  By default the CommonAPI framework assumes that both client and server run on the same machine
--  By default client and server communicate through UNIX sockets
-
-* both client and server machines must be on the same subnet
+*  By default the CommonAPI framework assumes that both client and server run on the same machine
+*  If you run client and server on the same machine, by default they will communicate through UNIX sockets
 > [!WARNING]
-> If using a VM, use Bridged Adapter mode
-> If using Windows Subsystem for Linux
-> * enable Hyper-V services (if not already enabled) and restart your computer
-> * run the Powershell as administrator
-> * retrievethe network interface name
-> ```bash
-> Get-NetAdapter
-> ```
-> create bridged network
-> ```bash
-> New-VMSwitch -Name "WSL_Bridge" -NetAdapterName "Your_Adapter_Name" -AllowManagementOS $true
-> ```
-> press WIN + R and type %USERPROFILE%
-> modify (or create) .wslconfig file
-> 
-> ```bash
-> [wsl2]
-> networkingMode=bridged
-> vmSwitch=WSL_Bridge
-> ```
-
-* both client and server machines must use the same multicast address
-  - Multicast routing must be configured manually
-```bash
-sudo ip route add 224.244.224.245 dev <network_interface>
-```
-> [!WARNING]
-To find the interface
-```bash
-ip a
-```
+> Both client and server machines must be on the same subnet
 
 To run the client/server instance of the service, execute the related script
 ```bash
