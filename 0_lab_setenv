@@ -1,0 +1,40 @@
+#!/bin/bash
+
+export LAB_LOADED="true"
+
+export LAB_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+export LIB_FOLDER="$LAB_ROOT/libraries"
+
+export SRC_LIB_FOLDER="$LIB_FOLDER/src"
+
+export INST_LIB_FOLDER="$LIB_FOLDER/install"
+
+export GENERATORS_FOLDER="$LIB_FOLDER/generators"
+
+export PROJ_ROOT="$LAB_ROOT/projects"
+
+if [ ! -d "$LIB_FOLDER" ]; then
+    echo "La cartella $LIB_FOLDER non esiste! La creo..."
+    mkdir -p "$LIB_FOLDER"
+fi
+
+if [ ! -d "$SRC_LIB_FOLDER" ]; then
+    echo "La cartella $SRC_LIB_FOLDER non esiste! La creo..."
+    mkdir -p "$SRC_LIB_FOLDER"
+fi
+
+if [ ! -d "$INST_LIB_FOLDER" ]; then
+    echo "La cartella $INST_LIB_FOLDER non esiste! La creo..."
+    mkdir -p "$INST_LIB_FOLDER"
+fi
+
+if [ ! -d "$GENERATORS_FOLDER" ]; then
+    echo "La cartella $GENERATORS_FOLDER non esiste! La creo..."
+    mkdir -p "$GENERATORS_FOLDER"
+fi
+
+if [ ! -d "$PROJ_ROOT" ]; then
+    echo "La cartella $PROJ_ROOT non esiste! La creo..."
+    mkdir -p "$PROJ_ROOT"
+fi

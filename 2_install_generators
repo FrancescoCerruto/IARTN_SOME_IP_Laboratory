@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -e
+
+if [ "$LAB_LOADED" != "true" ]; then
+	source 0_lab_setenv
+fi
+
+if [ ! -d "$GENERATORS_FOLDER/commonapi-core-generator" ]; then
+
+unzip -o commonapi-core-generator.zip -d $GENERATORS_FOLDER
+cat << EOF | sudo tee /usr/local/bin/commonapi-core > /dev/null
+#!/bin/bash
+java -jar $GENERATORS_FOLDER/commonapi-core-generator/plugins/org.eclipse.equinox.launcher_*.jar \\
+    -application org.genivi.commonapi.console.application \\
+    -nosplash \\
+    -data /tmp/commonapi_core_work \\
+    -sk \\
+    -dest src-gen/core \\
+    "\$@"
+EOF
+
+sudo chmod +x /usr/local/bin/commonapi-core
+
+fi
+
+if [ ! -d "$GENERATORS_FOLDER/commonapi-dbus-generator" ]; then
+
+unzip -o commonapi-dbus-generator.zip -d $GENERATORS_FOLDER
+cat << EOF | sudo tee /usr/local/bin/commonapi-dbus > /dev/null
+#!/bin/bash
+java -jar $GENERATORS_FOLDER/commonapi-dbus-generator/plugins/org.eclipse.equinox.launcher_*.jar \\
+    -application org.genivi.commonapi.console.application \\
+    -nosplash \\
+    -data /tmp/commonapi_dbus_work \\
+    -dest src-gen/dbus \\
+    "\$@"
+EOF
+
+sudo chmod +x /usr/local/bin/commonapi-dbus
+
+fi
+
+if [ ! -d "$GENERATORS_FOLDER/commonapi-someip-generator" ]; then
+
+unzip -o commonapi-someip-generator.zip -d $GENERATORS_FOLDER
+cat << EOF | sudo tee /usr/local/bin/commonapi-someip > /dev/null
+#!/bin/bash
+java -jar $GENERATORS_FOLDER/commonapi-someip-generator/plugins/org.eclipse.equinox.launcher_*.jar \\
+    -application org.genivi.commonapi.console.application \\
+    -nosplash \\
+    -data /tmp/commonapi_someip_work \\
+    -dest src-gen/someip \\
+    "\$@"
+EOF
+
+sudo chmod +x /usr/local/bin/commonapi-someip
+
+fi

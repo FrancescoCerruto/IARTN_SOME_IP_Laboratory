@@ -1,0 +1,63 @@
+#!/bin/bash
+
+set -e
+
+if [ "$LAB_LOADED" != "true" ]; then
+	source 0_lab_setenv
+fi
+
+sudo apt-get update
+sudo apt-get install -y cmake build-essential openjdk-8-jdk libboost-all-dev \
+                        maven wget patch pkg-config unzip
+
+cd $SRC_LIB_FOLDER
+
+if [ ! -d "capicxx-core-runtime" ]; then
+	git clone https://github.com/GENIVI/capicxx-core-runtime.git
+	cd capicxx-core-runtime/
+	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$INST_LIB_FOLDER .
+	sed -i '/#include <tuple>/a #include <string>' ./include/CommonAPI/Types.hpp
+	cmake --build build/ --target install
+	cd ..
+fi
+
+if [ ! -d "capicxx-dbus-runtime" ]; then
+	git clone https://github.com/GENIVI/capicxx-dbus-runtime.git
+
+	wget -N https://dbus.freedesktop.org/releases/dbus/dbus-1.12.16.tar.gz
+	tar -xf dbus-1.12.16.tar.gz
+	
+	rm dbus-1.12.16.tar.gz
+	
+	for patch in capicxx-dbus-runtime/src/dbus-patches/*.patch; do patch -d dbus-1.12.16/ -p1 <"$patch"; done
+
+	env -C dbus-1.12.16 ./configure --prefix=$INST_LIB_FOLDER
+	make -C dbus-1.12.16/dbus/ install
+	make -C dbus-1.12.16/ install-pkgconfigDATA
+
+	export PKG_CONFIG_PATH="$SRC_LIB_FOLDER/dbus-1.12.16"
+
+	cd capicxx-dbus-runtime
+
+	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$INST_LIB_FOLDER -DCMAKE_PREFIX_PATH=$INST_LIB_FOLDER -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON -DUSE_INSTALLED_DBUS=OFF -DDBus1_DIR="$SRC_LIB_FOLDER/dbus-1.12.16/cmake" .
+	cmake --build build --target install
+	
+	cd ..
+fi
+
+if [ ! -d "vsomeip" ]; then
+	git clone https://github.com/GENIVI/vsomeip.git
+	cd vsomeip
+	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$INST_LIB_FOLDER -DENABLE_SIGNAL_HANDLING=1
+	cmake --build build --target install
+	cd ..
+fi
+
+
+if [ ! -d "capicxx-someip-runtime" ]; then
+	git clone https://github.com/GENIVI/capicxx-someip-runtime.git
+	cd capicxx-someip-runtime
+	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=$INST_LIB_FOLDER -DCMAKE_PREFIX_PATH=$INST_LIB_FOLDER -DUSE_INSTALLED_COMMONAPI=OFF .
+	cmake --build build --target install
+	cd ..
+fi
