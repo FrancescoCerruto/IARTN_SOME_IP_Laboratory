@@ -1,0 +1,7 @@
+package commonapi.examples
+
+interface Status {
+	version { major 0 minor 1 }
+
+	attribute UInt32 status
+}

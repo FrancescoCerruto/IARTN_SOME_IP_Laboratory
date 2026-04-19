@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -e
+
+if [ "$LAB_LOADED" != "true" ]; then
+    echo "Lab environment is not set. Please execute 'source ./0_lab_setenv' in the root lab directory"
+    exit 1
+fi
+
+echo "Invoking generators for HelloWorld example"
+./1_generate_project HelloWorld rpc
+
+echo "Invoking generators for HelloWorldStruct example"
+./1_generate_project HelloWorldStruct rpc_struct
+
+echo "Invoking generators for Status example"
+./1_generate_project Status field
+
+echo "Invoking generators for Temperature example"
+./1_generate_project Temperature event
+
+echo "Generating CMake for HelloWorld example"
+./2_generate_cmake HelloWorld rpc v0/commonapi/examples
+
+echo "Generating CMake for HelloWorldStruct example"
+./2_generate_cmake HelloWorldStruct rpc_struct v0/commonapi/examples
+
+echo "Generating CMake for Status example"
+./2_generate_cmake Status field v0/commonapi/examples
+
+echo "Generating CMake for Temperature example"
+./2_generate_cmake Temperature event v1/my_package/iartn/some_ip_demo
+
+echo "Building HelloWorld example"
+./3_build_project rpc
+
+echo "Building HelloWorldStruct example"
+./3_build_project rpc_struct
+
+echo "Building Status example"
+./3_build_project field
+
+echo "Building Temperature example"
+./3_build_project event

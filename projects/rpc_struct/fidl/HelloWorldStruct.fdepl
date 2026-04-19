@@ -1,0 +1,22 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "HelloWorldStruct.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface commonapi.examples.HelloWorldStruct {
+    SomeIpServiceID = 4680
+
+    method sayHello {
+        SomeIpMethodID = 30000
+        SomeIpReliable = true
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider as Service {
+    instance commonapi.examples.HelloWorldStruct {
+        InstanceId = "commonapi.examples.HelloWorldStruct"
+        
+        SomeIpInstanceID = 4680
+    
+        SomeIpUnicastAddress = "192.168.1.22"
+        SomeIpReliableUnicastPort = 30899
+    }
+}

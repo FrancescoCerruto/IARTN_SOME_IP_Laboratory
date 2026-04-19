@@ -1,0 +1,27 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "Status.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface commonapi.examples.Status {
+
+	SomeIpServiceID = 4660 
+
+	attribute status {
+		SomeIpGetterID = 3000
+		SomeIpSetterID = 3001
+		SomeIpNotifierID = 33000
+        	SomeIpNotifierEventGroups = { 100 }	
+        	SomeIpReliable = false
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider as Service {
+    instance commonapi.examples.Status {
+        InstanceId = "commonapi.examples.Status"
+        
+        SomeIpInstanceID = 4660
+    
+        SomeIpUnicastAddress = "192.168.1.22"
+
+        SomeIpUnreliableUnicastPort = 30699
+    }
+}

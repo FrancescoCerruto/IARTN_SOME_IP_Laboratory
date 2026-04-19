@@ -1,0 +1,23 @@
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "Temperature.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface my_package.iartn.some_ip_demo.Temperature {
+	
+    SomeIpServiceID = 4650
+        broadcast temperature {
+        	SomeIpEventID = 32771
+        	SomeIpEventGroups = { 8 }
+        	SomeIpReliable = false
+        }
+}
+
+define org.genivi.commonapi.someip.deployment for provider as Service {
+    instance my_package.iartn.some_ip_demo.Temperature {
+        InstanceId = "my_package.iartn.some_ip_demo.Temperature" 
+        
+        SomeIpInstanceID = 4650
+        SomeIpUnicastAddress = "192.168.1.22"
+        SomeIpReliableUnicastPort = 30599
+        SomeIpUnreliableUnicastPort = 30599
+    }
+}

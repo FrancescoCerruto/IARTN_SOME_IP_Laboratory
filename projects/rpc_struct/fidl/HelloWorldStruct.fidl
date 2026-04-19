@@ -1,0 +1,19 @@
+package commonapi.examples
+
+interface HelloWorldStruct {
+    version { major 0 minor 1 }
+    
+    struct UserData {
+        String name
+        UInt32 id
+    }
+
+    method sayHello {
+        in {
+            UserData user
+        }
+        out {
+            String message
+        }
+    }
+}

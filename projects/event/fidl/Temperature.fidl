@@ -1,0 +1,15 @@
+package my_package.iartn.some_ip_demo
+
+interface Temperature {
+	version { major 1 minor 0 }
+	
+	    
+    broadcast temperature {
+        out {
+            Int32 temp
+        }
+    }
+}
+
+
+
