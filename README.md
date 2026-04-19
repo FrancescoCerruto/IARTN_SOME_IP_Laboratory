@@ -326,7 +326,7 @@ In the projects folder there are several scripts to simplify the generation and 
 > #!/bin/bash
 > set -e
 > ./1_generate_project ServiceName ServiceFolder
-> 2_generate_cmake ServiceName ServiceFolder ServicePackage
+> ./2_generate_cmake ServiceName ServiceFolder ServicePackage
 > ./3_build_project ServiceFolder
 >  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
