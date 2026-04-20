@@ -326,7 +326,7 @@ In the projects folder there are several scripts to simplify the generation and 
 > #!/bin/bash
 > set -e
 > ./1_generate_project ServiceName ServiceFolder
-> ./2_generate_cmake ServiceName ServiceFolder ServicePackage
+> ./2_generate_cmake ServiceName ServiceFolder ServicePackageNamespace
 > ./3_build_project ServiceFolder
 >  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
@@ -335,7 +335,7 @@ In the projects folder there are several scripts to simplify the generation and 
 ```
 * **2_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
 ```bash
-./2_generate_cmake <ServiceName> <ServiceFolder> <ServicePackage>
+./2_generate_cmake <ServiceName> <ServiceFolder> <ServicePackageNamespace>
 ```
 * **3_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
 ```bash
