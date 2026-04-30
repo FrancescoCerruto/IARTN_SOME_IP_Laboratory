@@ -2,11 +2,6 @@
 
 set -e
 
-if [ "$LAB_LOADED" != "true" ]; then
-    echo "Lab environment is not set. Please execute 'source ./0_lab_setenv' in the root lab directory"
-    exit 1
-fi
-
 # Check if both arguments are provided
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <ServiceName> <ServiceFolder> <ServicePackage>"
@@ -28,7 +23,7 @@ mkdir -p "$TARGET_DIR"
 # Service interface file
 OUTPUT_FILE="${SERVICE_NAME}.fidl"
 
-echo "Writing service interface file: $OUTPUT_FILE..."
+echo "Writing service interface file: ${TARGET_DIR}/${OUTPUT_FILE}..."
 
 cat <<EOF > "${TARGET_DIR}/${OUTPUT_FILE}"
 package $SERVICE_PACKAGE
@@ -70,13 +65,13 @@ interface $SERVICE_NAME {
 }
 EOF
 
-echo "Service interface file successfully generated: $OUTPUT_FILE"
+echo "Service interface file successfully generated: ${TARGET_DIR}/${OUTPUT_FILE}"
 
 
 # Service deployment file
 OUTPUT_FILE="${SERVICE_NAME}.fdepl"
 
-echo "Writing service deployment file: $OUTPUT_FILE..."
+echo "Writing service deployment file: ${TARGET_DIR}/${OUTPUT_FILE}..."
 
 cat <<EOF > "${TARGET_DIR}/${OUTPUT_FILE}"
 import "platform:/plugin/org.genivi.commonapi.someip.deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
@@ -116,7 +111,7 @@ define org.genivi.commonapi.someip.deployment for provider as Service {
 }
 EOF
 
-echo "Service deployment file sucessfully generated: $OUTPUT_FILE"
+echo "Service deployment file sucessfully generated: ${TARGET_DIR}/${OUTPUT_FILE}"
 
 TARGET_DIR="${SERVICE_FOLDER}/src"
 FILE_NAME="${SERVICE_NAME}Client.cpp"
@@ -125,7 +120,7 @@ FILE_NAME="${SERVICE_NAME}Client.cpp"
 mkdir -p "$TARGET_DIR"
 
 
-echo "Writing client source file: $OUTPUT_FILE..."
+echo "Writing client source file: ${TARGET_DIR}/${FILE_NAME}..."
 
 # Write the content to the file
 cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
@@ -191,7 +186,7 @@ FILE_NAME="${SERVICE_NAME}Service.cpp"
 mkdir -p "$TARGET_DIR"
 
 
-echo "Writing service source file: $OUTPUT_FILE..."
+echo "Writing service source file: ${TARGET_DIR}/${FILE_NAME}..."
 
 # Write the content to the file
 cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
@@ -260,7 +255,7 @@ mkdir -p "$TARGET_DIR"
 FILE_NAME_UPPER=$(echo "$FILE_NAME" | tr '[:lower:]' '[:upper:]')
 
 
-echo "Writing service interface source file: $OUTPUT_FILE..."
+echo "Writing service interface source file: ${TARGET_DIR}/${FILE_EXT}..."
 
 # Write the content to the file
 cat <<EOF > "${TARGET_DIR}/${FILE_EXT}"
@@ -280,7 +275,7 @@ public:
 #endif /* ${FILE_NAME_UPPER}_H_ */
 EOF
 
-echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+echo "Source file successfully generated: ${TARGET_DIR}/${FILE_EXT}"
 
 TARGET_DIR="${SERVICE_FOLDER}/src"
 FILE_NAME="${SERVICE_NAME}StubImpl.cpp"
@@ -289,7 +284,7 @@ FILE_NAME="${SERVICE_NAME}StubImpl.cpp"
 mkdir -p "$TARGET_DIR"
 
 
-echo "Writing service implementation source file: $OUTPUT_FILE..."
+echo "Writing service implementation source file: ${TARGET_DIR}/${FILE_NAME}..."
 
 # Write the content to the file
 cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
@@ -307,3 +302,99 @@ ${SERVICE_NAME}StubImpl::~${SERVICE_NAME}StubImpl() {
 EOF
 
 echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+TARGET_DIR="${SERVICE_FOLDER}"
+FILE_NAME="vsomeip_client.json"
+
+APP_NAME="${SERVICE_NAME}_client"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+
+echo "Writing configuration file: ${TARGET_DIR}/${FILE_NAME}..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
+{
+    "unicast" : "", 
+    "logging" : {
+        "level" : "trace",
+        "console" : "true"
+    },
+    "applications" : [
+        {
+            "name" : "$APP_NAME",
+            "id" : ""
+        }
+    ],
+    "routing" : "$APP_NAME",
+    "service-discovery" : {
+        "enable" : "true",
+        "multicast" : "224.244.224.245",
+        "port" : 30490,
+        "protocol" : "udp",
+        "initial_delay_min" : "10",
+        "initial_delay_max" : "100",
+        "repetitions_base_delay" : "200",
+        "repetitions_max" : "3",
+        "ttl" : "3",
+        "cyclic_offer_delay" : "2000",
+        "request_response_delay" : "1500"
+    }
+}
+EOF
+
+echo "Configuration file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+TARGET_DIR="${SERVICE_FOLDER}"
+FILE_NAME="vsomeip_server.json"
+
+APP_NAME="${SERVICE_NAME}_server"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+
+echo "Writing configuration file: ${TARGET_DIR}/${FILE_NAME}..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
+{
+    "unicast" : "", 
+    "logging" : {
+        "level" : "trace",
+        "console" : "true"
+    },
+    "applications" : [
+        {
+            "name" : "$APP_NAME",
+            "id" : ""
+        }
+    ],
+	"services" : [
+        {
+            "service" : "",
+            "instance" : "",
+            "unreliable" :  ,
+            "reliable" :  ,
+        }
+    ],
+    "routing" : "$APP_NAME",
+    "service-discovery" : {
+        "enable" : "true",
+        "multicast" : "224.244.224.245",
+        "port" : 30490,
+        "protocol" : "udp",
+        "initial_delay_min" : "10",
+        "initial_delay_max" : "100",
+        "repetitions_base_delay" : "200",
+        "repetitions_max" : "3",
+        "ttl" : "3",
+        "cyclic_offer_delay" : "2000",
+        "request_response_delay" : "1500"
+    }
+}
+EOF
+
+echo "Configuration file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
