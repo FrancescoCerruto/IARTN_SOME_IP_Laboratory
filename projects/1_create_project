@@ -1,0 +1,309 @@
+#!/bin/bash
+
+set -e
+
+if [ "$LAB_LOADED" != "true" ]; then
+    echo "Lab environment is not set. Please execute 'source ./0_lab_setenv' in the root lab directory"
+    exit 1
+fi
+
+# Check if both arguments are provided
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <ServiceName> <ServiceFolder> <ServicePackage>"
+    echo "Example: $0 HelloWorld rpc commonapi.examples"
+    exit 1
+fi
+
+SERVICE_NAME=$1
+SERVICE_FOLDER=$2
+SERVICE_PACKAGE=$3
+
+PACKAGE_NAMESPACE="v1::${SERVICE_PACKAGE//./::}"
+NAMESPACE_DIR="v1/${SERVICE_PACKAGE//.//}"
+
+TARGET_DIR="${SERVICE_FOLDER}/fidl"
+
+mkdir -p "$TARGET_DIR"
+
+# Service interface file
+OUTPUT_FILE="${SERVICE_NAME}.fidl"
+
+echo "Writing service interface file: $OUTPUT_FILE..."
+
+cat <<EOF > "${TARGET_DIR}/${OUTPUT_FILE}"
+package $SERVICE_PACKAGE
+
+interface $SERVICE_NAME {
+    version { major 1 minor 0 }
+
+    struct StructName {
+        type1 var1
+        type2 var2
+    }
+
+    method methodName fireAndForget {
+        in {
+			type1 var1
+			type2 var2 
+        }
+    }
+
+    method methodName {
+        in {
+			type1 var1
+			type2 var2
+        }
+        out {
+			type1 var1
+			type2 var2
+        }
+    }
+
+    attribute type fieldName
+
+    broadcast eventName {
+        out {
+			type1 var1
+			type2 var2
+        }
+    }
+}
+EOF
+
+echo "Service interface file successfully generated: $OUTPUT_FILE"
+
+
+# Service deployment file
+OUTPUT_FILE="${SERVICE_NAME}.fdepl"
+
+echo "Writing service deployment file: $OUTPUT_FILE..."
+
+cat <<EOF > "${TARGET_DIR}/${OUTPUT_FILE}"
+import "platform:/plugin/org.genivi.commonapi.someip.deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "${SERVICE_NAME}.fidl"
+
+define org.genivi.commonapi.someip.deployment for interface ${SERVICE_PACKAGE}.${SERVICE_NAME} {
+    SomeIpServiceID = 
+
+    method methodName {
+        SomeIpMethodID = 
+        SomeIpReliable = 
+    }
+
+    attribute fieldName{
+        SomeIpGetterID =
+        SomeIpSetterID =
+        SomeIpNotifierID =
+        SomeIpReliable =
+        SomeIpNotifierEventGroups = { }
+    }
+
+    broadcast eventName {
+        SomeIpEventID =
+        SomeIpReliable =
+        SomeIpEventgroups = { }
+    }
+}
+
+define org.genivi.commonapi.someip.deployment for provider as Service {
+    instance ${SERVICE_PACKAGE}.${SERVICE_NAME} {
+        InstanceId = "${SERVICE_PACKAGE}.${SERVICE_NAME}"
+        SomeIpInstanceID = 
+        SomeIpUnicastAddress = ""
+        SomeIpReliableUnicastPort =
+        SomeIpUnreliableUnicastPort =
+    }
+}
+EOF
+
+echo "Service deployment file sucessfully generated: $OUTPUT_FILE"
+
+TARGET_DIR="${SERVICE_FOLDER}/src"
+FILE_NAME="${SERVICE_NAME}Client.cpp"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+
+echo "Writing client source file: $OUTPUT_FILE..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
+// ${FILE_NAME}
+#include <iostream>
+#include <string>
+#include <thread>
+#include <csignal>
+#include <atomic>
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
+#include <CommonAPI/CommonAPI.hpp>
+#include <${NAMESPACE_DIR}/${SERVICE_NAME}Proxy.hpp>
+
+using namespace ${PACKAGE_NAMESPACE};
+
+// Atomic flag to stop threads safely
+std::atomic<bool> keepRunning(true);
+
+// SIGINT handler
+void signalHandler(int signum) {
+    std::cout << "\nKilling ${SERVICE_NAME}Client ..." << std::endl;
+    keepRunning = false;
+}
+
+int main() {
+    CommonAPI::Runtime::setProperty("LogContext", "E01C");
+    CommonAPI::Runtime::setProperty("LogApplication", "E01C");
+    CommonAPI::Runtime::setProperty("LibraryBase", "${SERVICE_NAME}");
+
+    std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
+
+    std::string domain = "local";
+    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}";
+    std::string connection = "${SERVICE_NAME}_client";
+
+    std::shared_ptr<${SERVICE_NAME}Proxy<>> myProxy = runtime->buildProxy<${SERVICE_NAME}Proxy>(domain,
+            instance, connection);
+
+    std::cout << "Checking availability!" << std::endl;
+    while (!myProxy->isAvailable() && keepRunning)
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
+    std::cout << "Available..." << std::endl;
+    
+    //SIGINT (Ctrl+C) handler declaration
+    signal(SIGINT, signalHandler);
+
+    while (keepRunning) {}
+
+    return 0;
+}
+EOF
+
+echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+TARGET_DIR="${SERVICE_FOLDER}/src"
+FILE_NAME="${SERVICE_NAME}Service.cpp"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+
+echo "Writing service source file: $OUTPUT_FILE..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
+// ${FILE_NAME}
+#include <iostream>
+#include <thread>
+#include <csignal>
+#include <atomic>
+
+#include <CommonAPI/CommonAPI.hpp>
+#include "${SERVICE_NAME}StubImpl.hpp"
+
+using namespace std;
+
+using namespace ${PACKAGE_NAMESPACE};
+
+// Atomic flag to stop threads safely
+std::atomic<bool> keepRunning(true);
+
+// SIGINT handler
+void signalHandler(int signum) {
+    std::cout << "\nKilling ${SERVICE_NAME}Service ..." << std::endl;
+    keepRunning = false;
+}
+
+int main() {
+    CommonAPI::Runtime::setProperty("LogContext", "E01S");
+    CommonAPI::Runtime::setProperty("LogApplication", "E01S");
+    CommonAPI::Runtime::setProperty("LibraryBase", "${SERVICE_NAME}");
+
+    std::shared_ptr<CommonAPI::Runtime> runtime = CommonAPI::Runtime::get();
+
+    std::string domain = "local";
+    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}";
+    std::string connection = "${SERVICE_NAME}_server";
+
+    std::shared_ptr<${SERVICE_NAME}StubImpl> myService = std::make_shared<${SERVICE_NAME}StubImpl>();
+    bool successfullyRegistered = runtime->registerService(domain, instance, myService, connection);
+
+    while (!successfullyRegistered) {
+        std::cout << "Register Service failed, trying again in 100 milliseconds..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        successfullyRegistered = runtime->registerService(domain, instance, myService, connection);
+    }
+
+    std::cout << "Successfully Registered Service!" << std::endl;
+
+    //SIGINT (Ctrl+C) handler declaration
+    signal(SIGINT, signalHandler);
+    
+    while(keepRunning) {}
+   
+    return 0;
+}
+EOF
+
+echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+TARGET_DIR="${SERVICE_FOLDER}/src"
+FILE_NAME="${SERVICE_NAME}StubImpl"
+FILE_EXT="${SERVICE_NAME}StubImpl.hpp"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+FILE_NAME_UPPER=$(echo "$FILE_NAME" | tr '[:lower:]' '[:upper:]')
+
+
+echo "Writing service interface source file: $OUTPUT_FILE..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_EXT}"
+// ${FILE_EXT}
+#ifndef ${FILE_NAME_UPPER}_H_
+#define ${FILE_NAME_UPPER}_H_
+
+#include <CommonAPI/CommonAPI.hpp>
+#include <${NAMESPACE_DIR}/${SERVICE_NAME}StubDefault.hpp>
+
+class ${FILE_NAME}: public ${PACKAGE_NAMESPACE}::${SERVICE_NAME}StubDefault {
+
+public:
+    ${FILE_NAME}();
+    virtual ~${FILE_NAME}();
+};
+#endif /* ${FILE_NAME_UPPER}_H_ */
+EOF
+
+echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+TARGET_DIR="${SERVICE_FOLDER}/src"
+FILE_NAME="${SERVICE_NAME}StubImpl.cpp"
+
+# Create the directory if it doesn't exist
+mkdir -p "$TARGET_DIR"
+
+
+echo "Writing service implementation source file: $OUTPUT_FILE..."
+
+# Write the content to the file
+cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
+// ${FILE_NAME}
+#include "${SERVICE_NAME}StubImpl.cpp"
+
+${SERVICE_NAME}StubImpl::${SERVICE_NAME}StubImpl() {
+
+}
+
+${SERVICE_NAME}StubImpl::~${SERVICE_NAME}StubImpl() {
+
+}
+
+EOF
+
+echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
