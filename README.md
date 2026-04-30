@@ -107,11 +107,12 @@ Make all the scripts executable
   sudo chmod +x ./1_install_libraries
   sudo chmod +x ./2_install_generators
   sudo chmod +x ./projects/0_build_examples
-  sudo chmod +x ./projects/1_generate_project
-  sudo chmod +x ./projects/2_generate_cmake
-  sudo chmod +x ./projects/3_build_project
-  sudo chmod +x ./projects/4_execute_client
-  sudo chmod +x ./projects/4_execute_service
+  sudo chmod +x ./projects/1_create_project
+  sudo chmod +x ./projects/2_generate_project
+  sudo chmod +x ./projects/3_generate_cmake
+  sudo chmod +x ./projects/4_build_project
+  sudo chmod +x ./projects/5_execute_client
+  sudo chmod +x ./projects/5_execute_service
 ```
 
 ---
@@ -212,6 +213,11 @@ IARTN_SOME_IP_Laboratory/
 │   │   │   └── <ServiceName>.fidl
 │   │   ├── vsomeip_client.json
 │   │   └── vsomeip_server.json
+```
+
+The **1_create_project** parametrized script will automatically generate both the fidl and src folder with the relevant files
+```bash
+./1_create_project <ServiceName> <ServiceFolder> <ServicePackage>
 ```
 
 > [!WARNING]
@@ -325,9 +331,9 @@ In the projects folder there are several scripts to simplify the generation and 
 > ```bash
 > #!/bin/bash
 > set -e
-> ./1_generate_project ServiceName ServiceFolder
-> ./2_generate_cmake ServiceName ServiceFolder ServicePackageNamespace
-> ./3_build_project ServiceFolder
+> ./1_generate_project <ServiceName> <ServiceFolder>
+> ./2_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
+> ./3_build_project <ServiceFolder>
 >  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
 ```bash
