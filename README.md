@@ -335,7 +335,7 @@ In the projects folder there are several scripts to simplify the generation and 
 ```
 * **2_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
 ```bash
-./2_generate_cmake <ServiceName> <ServiceFolder> <ServicePackageNamespace>
+./2_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
 ```
 * **3_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
 ```bash
