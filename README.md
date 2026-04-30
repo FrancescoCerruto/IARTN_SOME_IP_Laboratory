@@ -331,21 +331,21 @@ In the projects folder there are several scripts to simplify the generation and 
 > ```bash
 > #!/bin/bash
 > set -e
-> ./1_generate_project <ServiceName> <ServiceFolder>
-> ./2_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
-> ./3_build_project <ServiceFolder>
+> ./2_generate_project <ServiceName> <ServiceFolder>
+> ./3_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
+> ./4_build_project <ServiceFolder>
 >  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
 ```bash
-./1_generate_project <ServiceName> <ServiceFolder>
+./2_generate_project <ServiceName> <ServiceFolder>
 ```
 * **2_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
 ```bash
-./2_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
+./3_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
 ```
 * **3_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
 ```bash
-./3_build_project <ServiceFolder>
+./4_build_project <ServiceFolder>
 ```
 
 ---
@@ -359,5 +359,5 @@ For each service, SOME/IP client and SOME/IP server must run on different machin
 
 To run the client/server instance of the service, execute the related script
 ```bash
-./4_execute_<client/service> <ServiceName> <ServiceFolder>
+./5_execute_<client/service> <ServiceName> <ServiceFolder>
 ```
