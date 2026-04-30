@@ -9,8 +9,8 @@ fi
 
 if [ "$#" -ne 3 ]; then
     echo "Error: not enough arguments."
-    echo "$0 <ServiceName> <ServiceFolder> <ServicePackage>"
-    echo "Example: $0 HelloWorld rpc commonapi/examples"
+    echo "$0 <ServiceName> <ServiceFolder> <PackageDirectory>"
+    echo "Example: $0 HelloWorld rpc v0/commonapi/examples"
     exit 1
 fi
 
