@@ -74,7 +74,7 @@ OUTPUT_FILE="${SERVICE_NAME}.fdepl"
 echo "Writing service deployment file: ${TARGET_DIR}/${OUTPUT_FILE}..."
 
 cat <<EOF > "${TARGET_DIR}/${OUTPUT_FILE}"
-import "platform:/plugin/org.genivi.commonapi.someip.deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
+import "platform:/plugin/org.genivi.commonapi.someip/deployment/CommonAPI-4-SOMEIP_deployment_spec.fdepl"
 import "${SERVICE_NAME}.fidl"
 
 define org.genivi.commonapi.someip.deployment for interface ${SERVICE_PACKAGE}.${SERVICE_NAME} {
