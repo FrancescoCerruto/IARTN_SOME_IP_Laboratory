@@ -289,7 +289,7 @@ echo "Writing service implementation source file: ${TARGET_DIR}/${FILE_NAME}..."
 # Write the content to the file
 cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
 // ${FILE_NAME}
-#include "${SERVICE_NAME}StubImpl.cpp"
+#include "${SERVICE_NAME}StubImpl.hpp"
 
 ${SERVICE_NAME}StubImpl::${SERVICE_NAME}StubImpl() {
 
