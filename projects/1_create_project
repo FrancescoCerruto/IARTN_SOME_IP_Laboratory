@@ -96,7 +96,7 @@ define org.genivi.commonapi.someip.deployment for interface ${SERVICE_PACKAGE}.$
     broadcast eventName {
         SomeIpEventID =
         SomeIpReliable =
-        SomeIpEventgroups = { }
+        SomeIpEventGroups = { }
     }
 }
 
