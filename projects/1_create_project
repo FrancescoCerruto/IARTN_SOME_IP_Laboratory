@@ -3,16 +3,16 @@
 set -e
 
 # Check if both arguments are provided
-if [ "$#" -ne 4 ]; then
-    echo "Usage: $0 <ServiceName> <ServiceFolder> <NumServiceInstances> <ServicePackage>"
-    echo "Example: $0 HelloWorld rpc/Instance_1 commonapi.examples"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <ServiceName> <ServiceFolder> <NumServiceInstances>"
+    echo "Example: $0 HelloWorld rpc 1"
     exit 1
 fi
 
 SERVICE_NAME=$1
 SERVICE_FOLDER=$2
 NUM_INSTANCES=$3
-SERVICE_PACKAGE=$4
+SERVICE_PACKAGE="iartn.someip.lab"
 
 PACKAGE_NAMESPACE="v1::${SERVICE_PACKAGE//./::}"
 NAMESPACE_DIR="v1/${SERVICE_PACKAGE//.//}"
