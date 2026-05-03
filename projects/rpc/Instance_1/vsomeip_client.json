@@ -1,23 +1,16 @@
 {
-    "unicast" : "192.168.1.22",
+    "unicast" : "192.168.1.23", 
     "logging" : {
         "level" : "trace",
         "console" : "true"
     },
     "applications" : [
         {
-            "name" : "HelloWorld_server",
-            "id" : "6666"
+            "name" : "HelloWorld_Instance_1_client",
+            "id" : "5555"
         }
     ],
-    "services" : [
-        {
-            "service" : "4670",
-            "instance" : "4670",
-            "reliable" :  30799
-        }
-    ],
-    "routing" : "HelloWorld_server",
+    "routing" : "HelloWorld_Instance_1_client",
     "service-discovery" : {
         "enable" : "true",
         "multicast" : "224.244.224.245",

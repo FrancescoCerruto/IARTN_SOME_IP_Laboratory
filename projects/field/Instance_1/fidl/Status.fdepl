@@ -16,7 +16,7 @@ define org.genivi.commonapi.someip.deployment for interface commonapi.examples.S
 
 define org.genivi.commonapi.someip.deployment for provider as Service {
     instance commonapi.examples.Status {
-        InstanceId = "commonapi.examples.Status"
+        InstanceId = "commonapi.examples.Status.Instance_1"
         
         SomeIpInstanceID = 4660
     

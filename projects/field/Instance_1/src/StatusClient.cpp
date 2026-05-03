@@ -31,18 +31,18 @@ int main() {
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
     std::string domain = "local";
-    std::string instance = "commonapi.examples.Status";
-    std::string connection = "Status_client";
+    std::string instance = "commonapi.examples.Status.Instance_1";
+    std::string connection = "Status_Instance_1_client";
     
     std::shared_ptr<StatusProxy<>> myProxy = runtime->buildProxy<StatusProxy>(domain, instance, connection);
+        
+    //SIGINT (Ctrl+C) handler declaration
+    signal(SIGINT, signalHandler);
     
     std::cout << "Checking availability!" << std::endl;
     while (!myProxy->isAvailable() && keepRunning)
         std::this_thread::sleep_for(std::chrono::microseconds(10));
     std::cout << "Available..." << std::endl;
-    
-    //SIGINT (Ctrl+C) handler declaration
-    signal(SIGINT, signalHandler);
     
     // field notifier subscription
     myProxy->getStatusAttribute().getChangedEvent().subscribe([](const uint32_t& val) {

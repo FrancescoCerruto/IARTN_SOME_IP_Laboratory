@@ -6,18 +6,18 @@
     },
     "applications" : [
         {
-            "name" : "HelloWorldStruct_server",
-            "id" : "8888"
+            "name" : "Temperature_Instance_1_server",
+            "id" : "2222"
         }
     ],
     "services" : [
         {
-            "service" : "4680",
-            "instance" : "4680",
-            "reliable" :  30899
+            "service" : "4650",
+            "instance" : "4650",
+            "unreliable" :  30599
         }
     ],
-    "routing" : "HelloWorldStruct_server",
+    "routing" : "Temperature_Instance_1_server",
     "service-discovery" : {
         "enable" : "true",
         "multicast" : "224.244.224.245",

@@ -6,11 +6,11 @@
     },
     "applications" : [
         {
-            "name" : "Status_client",
-            "id" : "4444"
+            "name" : "HelloWorldStruct_Instance_1_client",
+            "id" : "7777"
         }
     ],
-    "routing" : "Status_client",
+    "routing" : "HelloWorldStruct_Instance_1_client",
     "service-discovery" : {
         "enable" : "true",
         "multicast" : "224.244.224.245",

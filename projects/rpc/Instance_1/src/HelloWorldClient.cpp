@@ -53,20 +53,20 @@ int main() {
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
     std::string domain = "local";
-    std::string instance = "commonapi.examples.HelloWorld";
-    std::string connection = "HelloWorld_client";
+    std::string instance = "commonapi.examples.HelloWorld.Instance_1";
+    std::string connection = "HelloWorld_Instance_1_client";
 
     std::shared_ptr<HelloWorldProxy<>> myProxy = runtime->buildProxy<HelloWorldProxy>(domain,
             instance, connection);
+        
+    //SIGINT (Ctrl+C) handler declaration
+    signal(SIGINT, signalHandler);
 
     std::cout << "Checking availability!" << std::endl;
     while (!myProxy->isAvailable() && keepRunning) 
         std::this_thread::sleep_for(std::chrono::microseconds(10));
     
     std::cout << "Available..." << std::endl;
-    
-    //SIGINT (Ctrl+C) handler declaration
-    signal(SIGINT, signalHandler);
     
     std::thread threadMethod(callMethod, myProxy);
 

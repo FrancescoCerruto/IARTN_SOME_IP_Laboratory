@@ -13,7 +13,7 @@ define org.genivi.commonapi.someip.deployment for interface my_package.iartn.som
 
 define org.genivi.commonapi.someip.deployment for provider as Service {
     instance my_package.iartn.some_ip_demo.Temperature {
-        InstanceId = "my_package.iartn.some_ip_demo.Temperature" 
+        InstanceId = "my_package.iartn.some_ip_demo.Temperature.Instance_1" 
         
         SomeIpInstanceID = 4650
         SomeIpUnicastAddress = "192.168.1.22"

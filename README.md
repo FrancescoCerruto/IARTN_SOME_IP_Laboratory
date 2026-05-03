@@ -203,21 +203,22 @@ You should obtain a folder tree like the following one
 IARTN_SOME_IP_Laboratory/
 ├── projects/
 │   ├── <ServiceFolder>/
-│   │   ├── src/
-│   │   │   ├── <ServiceName>Client.cpp
-│   │   │   ├── <ServiceName>Service.cpp
-│   │   │   ├── <ServiceName>StubImpl.cpp
-│   │   │   └── <ServiceName>StubImpl.hpp
-│   │   └── fidl/
-│   │   │   ├── <ServiceName>.fdepl
-│   │   │   └── <ServiceName>.fidl
-│   │   ├── vsomeip_client.json
-│   │   └── vsomeip_server.json
+│   │   ├── <ServiceFolder>/
+│   │   │   ├── src/
+│   │   │   │   ├── <ServiceName>Client.cpp
+│   │   │   │   ├── <ServiceName>Service.cpp
+│   │   │   │   ├── <ServiceName>StubImpl.cpp
+│   │   │   │   └── <ServiceName>StubImpl.hpp
+│   │   │   └── fidl/
+│   │   │   │   ├── <ServiceName>.fdepl
+│   │   │   │   └── <ServiceName>.fidl
+│   │   │   ├── vsomeip_client.json
+│   │   │   └── vsomeip_server.json
 ```
 
-The **1_create_project** parametrized script will automatically generate both the fidl and src folder with the relevant files
+The **1_create_project** parametrized script will automatically generate both the fidl and src folder with the skeleton of the relevant files
 ```bash
-./1_create_project <ServiceName> <ServiceFolder> <ServicePackage>
+./1_create_project <ServiceName> <ServiceFolder> <NumServiceInstances> <ServicePackage>
 ```
 
 > [!WARNING]
@@ -237,7 +238,7 @@ The **1_create_project** parametrized script will automatically generate both th
 Inside **.fdepl** file
 ```bash
 SomeIpServiceID = 1234 // must be unique through the entire netowrk
-SomeIpUnicastAddress = "YOUR_IP_ADDRESS"
+SomeIpUnicastAddress = "SERVER_IP_ADDRESS"
 ```
 Inside the **vsomeip_client.json** and **vsomeip_server.json** file
 ```bash
@@ -249,36 +250,27 @@ Inside the **vsomeip_server.json** file
 ```bash
 "services" : [
         {
-            "service" : "0x1234", <-- SomeIpServiceID in exadecimal format
-            "instance" : "0x1234", <-- SomeIpInstanceID in exadecimal format
+            "service" : "1234", <-- SomeIpServiceID in exadecimal format
+            "instance" : "1234", <-- SomeIpInstanceID in exadecimal format
             "reliable" :  30499  <-- SomeIpReliable = true, SomeIpReliableUnicastPort
             --------------------------------------------------------------------------------
             "unreliable" :  30499  <-- SomeIpReliable = false, SomeIpUnreliableUnicastPort 
         }
     ],
 ```
+> [!WARNING]
+> The application ID must be uinque through the entire network.
+> ```bash
+>  "applications" : [
+>        {
+>            "name" : "...",
+>            "id" : "0x3333"  <-- it must be unique
+>        }
+>    ],
+>  ```
+> ```bash
 
 > [!WARNING]
-> If the same machine runs multiple servers or multiple clients, both the application source code and vsomeip.json files must be set properly.
->  * You must ensure that each application has an unique name and id
-> ```bash
-> //vsomeip_client.json file
->  "applications" : [
->        {
->            "name" : "<ServiceName>_client",
->            "id" : "0x3333"  <-- it must be unique inside the machine
->        }
->    ],
->  ```
-> ```bash
-> //vsomeip_server.json file
->  "applications" : [
->        {
->            "name" : "<ServiceName>_server",
->            "id" : "0x3333"  <-- it must be unique inside the machine
->        }
->    ],
->  ```
 > * You must enable only one application as routing manager for each machine (it does not matter which application will be the routing manager). The other applications will use the single routing manager (it must be specified the name) as routing manager
 > - The someip.json file of the routing manager must contains, in this case, all the name of the applications and all the services (offered and searched)' parameters 
 > ```bash

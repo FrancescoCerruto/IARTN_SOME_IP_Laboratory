@@ -10,7 +10,7 @@ fi
 if [ "$#" -ne 1 ]; then
     echo "Error: not enough arguments."
     echo "$0 <ServiceFolder>"
-    echo "Example: $0 rpc"
+    echo "Example: $0 rpc/Instance_1"
     exit 1
 fi
 

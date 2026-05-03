@@ -3,21 +3,32 @@
 set -e
 
 # Check if both arguments are provided
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <ServiceName> <ServiceFolder> <ServicePackage>"
-    echo "Example: $0 HelloWorld rpc commonapi.examples"
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 <ServiceName> <ServiceFolder> <NumServiceInstances> <ServicePackage>"
+    echo "Example: $0 HelloWorld rpc/Instance_1 commonapi.examples"
     exit 1
 fi
 
 SERVICE_NAME=$1
 SERVICE_FOLDER=$2
-SERVICE_PACKAGE=$3
+NUM_INSTANCES=$3
+SERVICE_PACKAGE=$4
 
 PACKAGE_NAMESPACE="v1::${SERVICE_PACKAGE//./::}"
 NAMESPACE_DIR="v1/${SERVICE_PACKAGE//.//}"
 
-TARGET_DIR="${SERVICE_FOLDER}/fidl"
+TARGET_DIR="${SERVICE_FOLDER}"
 
+mkdir -p "$TARGET_DIR"
+
+# multiple instances --> one "standard" folder structure for each instance
+
+# i am inside IARTN_SOME_IP_Laboratory/projects/ServiceFolder
+
+for i in $(seq 1 $NUM_INSTANCES); do
+
+TARGET_DIR="${SERVICE_FOLDER}/Instance_${i}/fidl"
+	
 mkdir -p "$TARGET_DIR"
 
 # Service interface file
@@ -96,13 +107,13 @@ define org.genivi.commonapi.someip.deployment for interface ${SERVICE_PACKAGE}.$
     broadcast eventName {
         SomeIpEventID =
         SomeIpReliable =
-        SomeIpEventGroups = { }
+        SomeIpEventgroups = { }
     }
 }
 
 define org.genivi.commonapi.someip.deployment for provider as Service {
     instance ${SERVICE_PACKAGE}.${SERVICE_NAME} {
-        InstanceId = "${SERVICE_PACKAGE}.${SERVICE_NAME}"
+        InstanceId = "${SERVICE_PACKAGE}.${SERVICE_NAME}.Instance_${i}"
         SomeIpInstanceID = 
         SomeIpUnicastAddress = ""
         SomeIpReliableUnicastPort =
@@ -113,12 +124,11 @@ EOF
 
 echo "Service deployment file sucessfully generated: ${TARGET_DIR}/${OUTPUT_FILE}"
 
-TARGET_DIR="${SERVICE_FOLDER}/src"
+TARGET_DIR="${SERVICE_FOLDER}/Instance_${i}/src"
 FILE_NAME="${SERVICE_NAME}Client.cpp"
 
 # Create the directory if it doesn't exist
 mkdir -p "$TARGET_DIR"
-
 
 echo "Writing client source file: ${TARGET_DIR}/${FILE_NAME}..."
 
@@ -157,8 +167,8 @@ int main() {
     std::shared_ptr < CommonAPI::Runtime > runtime = CommonAPI::Runtime::get();
 
     std::string domain = "local";
-    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}";
-    std::string connection = "${SERVICE_NAME}_client";
+    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}.Instance_${i}";
+    std::string connection = "${SERVICE_NAME}_Instance_${i}_client";
 
     std::shared_ptr<${SERVICE_NAME}Proxy<>> myProxy = runtime->buildProxy<${SERVICE_NAME}Proxy>(domain,
             instance, connection);
@@ -179,12 +189,7 @@ EOF
 
 echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
 
-TARGET_DIR="${SERVICE_FOLDER}/src"
 FILE_NAME="${SERVICE_NAME}Service.cpp"
-
-# Create the directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
-
 
 echo "Writing service source file: ${TARGET_DIR}/${FILE_NAME}..."
 
@@ -220,9 +225,9 @@ int main() {
     std::shared_ptr<CommonAPI::Runtime> runtime = CommonAPI::Runtime::get();
 
     std::string domain = "local";
-    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}";
-    std::string connection = "${SERVICE_NAME}_server";
-
+    std::string instance = "${SERVICE_PACKAGE}.${SERVICE_NAME}.Instance_${i}";
+    std::string connection = "${SERVICE_NAME}_Instance_${i}_server";
+    
     std::shared_ptr<${SERVICE_NAME}StubImpl> myService = std::make_shared<${SERVICE_NAME}StubImpl>();
     bool successfullyRegistered = runtime->registerService(domain, instance, myService, connection);
 
@@ -245,15 +250,10 @@ EOF
 
 echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
 
-TARGET_DIR="${SERVICE_FOLDER}/src"
 FILE_NAME="${SERVICE_NAME}StubImpl"
 FILE_EXT="${SERVICE_NAME}StubImpl.hpp"
 
-# Create the directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
-
 FILE_NAME_UPPER=$(echo "$FILE_NAME" | tr '[:lower:]' '[:upper:]')
-
 
 echo "Writing service interface source file: ${TARGET_DIR}/${FILE_EXT}..."
 
@@ -277,12 +277,7 @@ EOF
 
 echo "Source file successfully generated: ${TARGET_DIR}/${FILE_EXT}"
 
-TARGET_DIR="${SERVICE_FOLDER}/src"
 FILE_NAME="${SERVICE_NAME}StubImpl.cpp"
-
-# Create the directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
-
 
 echo "Writing service implementation source file: ${TARGET_DIR}/${FILE_NAME}..."
 
@@ -303,14 +298,10 @@ EOF
 
 echo "Source file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
 
-TARGET_DIR="${SERVICE_FOLDER}"
+TARGET_DIR="${SERVICE_FOLDER}/Instance_${i}"
 FILE_NAME="vsomeip_client.json"
 
-APP_NAME="${SERVICE_NAME}_client"
-
-# Create the directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
-
+APP_NAME="${SERVICE_NAME}_Instance_${i}_client"
 
 echo "Writing configuration file: ${TARGET_DIR}/${FILE_NAME}..."
 
@@ -347,14 +338,9 @@ EOF
 
 echo "Configuration file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
 
-TARGET_DIR="${SERVICE_FOLDER}"
 FILE_NAME="vsomeip_server.json"
 
-APP_NAME="${SERVICE_NAME}_server"
-
-# Create the directory if it doesn't exist
-mkdir -p "$TARGET_DIR"
-
+APP_NAME="${SERVICE_NAME}_Instance_${i}_server"
 
 echo "Writing configuration file: ${TARGET_DIR}/${FILE_NAME}..."
 
@@ -398,3 +384,5 @@ cat <<EOF > "${TARGET_DIR}/${FILE_NAME}"
 EOF
 
 echo "Configuration file successfully generated: ${TARGET_DIR}/${FILE_NAME}"
+
+done

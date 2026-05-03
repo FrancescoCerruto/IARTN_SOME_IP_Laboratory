@@ -1,16 +1,23 @@
 {
-    "unicast" : "192.168.1.23", 
+    "unicast" : "192.168.1.22",
     "logging" : {
         "level" : "trace",
         "console" : "true"
     },
     "applications" : [
         {
-            "name" : "Temperature_client",
-            "id" : "1111"
+            "name" : "Status_Instance_1_server",
+            "id" : "3333"
         }
     ],
-    "routing" : "Temperature_client",
+    "services" : [
+        {
+            "service" : "4660",
+            "instance" : "4660",
+            "unreliable" :  30699
+        }
+    ],
+    "routing" : "Status_Instance_1_server",
     "service-discovery" : {
         "enable" : "true",
         "multicast" : "224.244.224.245",
