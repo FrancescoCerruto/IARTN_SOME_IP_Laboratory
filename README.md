@@ -146,10 +146,6 @@ The system setup should be done only one. Once the libraries are installed and b
 >   cd $LAB_ROOT
 >   ./install_libraries
 > ```
-> please answer 
-> ```bash 
->    y
-> ```
 
 ### Install CommonAPI code generators
 ```bash
