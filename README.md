@@ -253,8 +253,8 @@ Inside the **vsomeip_server.json** file
 ```bash
 "services" : [
         {
-            "service" : "1234", <-- SomeIpServiceID in exadecimal format
-            "instance" : "1234", <-- SomeIpInstanceID in exadecimal format
+            "service" : "1234", <-- SomeIpServiceID
+            "instance" : "1234", <-- SomeIpInstanceID
             "reliable" :  30499  <-- SomeIpReliable = true, SomeIpReliableUnicastPort
             --------------------------------------------------------------------------------
             "unreliable" :  30499  <-- SomeIpReliable = false, SomeIpUnreliableUnicastPort 
@@ -267,11 +267,10 @@ Inside the **vsomeip_server.json** file
 >  "applications" : [
 >        {
 >            "name" : "...",
->            "id" : "0x3333"  <-- it must be unique
+>            "id" : "3333"  <-- it must be unique
 >        }
 >    ],
 >  ```
-> ```bash
 
 > [!WARNING]
 > * You must enable only one application as routing manager for each machine (it does not matter which application will be the routing manager). The other applications will use the single routing manager (it must be specified the name) as routing manager
@@ -330,18 +329,18 @@ In the projects folder there are several scripts to simplify the generation and 
 > ./3_generate_cmake <ServiceName> <ServiceFolder> <NumServiceInstances> [<PackageDirectory> (opt)]
 > ./4_build_project <ServiceFolder> <NumServiceInstances>
 >  ```
-* **1_generate_project**: this script invokes the CommonAPI generators
+* **2_generate_project**: this script invokes the CommonAPI generators
 ```bash
 ./2_generate_project <ServiceName> <ServiceFolder> <NumServiceInstances>
 ```
-* **2_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
+* **3_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
 ```bash
 ./3_generate_cmake <ServiceName> <ServiceFolder> <NumServiceInstances> [<PackageDirectory> (opt)]
 ```
 > [!WARNING]
 > * The script specifies as PackageDirectory the default value of "v1/iartn/someip/lab". If a different PackageDirectory is needed, you should specify it as additional parameter
 
-* **3_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
+* **4_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
 ```bash
 ./4_build_project <ServiceFolder> <NumServiceInstances>
 ```
