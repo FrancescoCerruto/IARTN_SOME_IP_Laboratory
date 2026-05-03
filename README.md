@@ -218,7 +218,7 @@ IARTN_SOME_IP_Laboratory/
 
 The **1_create_project** parametrized script will automatically generate both the fidl and src folder with the skeleton of the relevant files
 ```bash
-./1_create_project <ServiceName> <ServiceFolder> <NumServiceInstances> <ServicePackage>
+./1_create_project <ServiceName> <ServiceFolder> <NumServiceInstances>
 ```
 
 > [!WARNING]
