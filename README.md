@@ -203,7 +203,7 @@ You should obtain a folder tree like the following one
 IARTN_SOME_IP_Laboratory/
 ├── projects/
 │   ├── <ServiceFolder>/
-│   │   ├── <ServiceFolder>/
+│   │   ├── Instance_<x>/
 │   │   │   ├── src/
 │   │   │   │   ├── <ServiceName>Client.cpp
 │   │   │   │   ├── <ServiceName>Service.cpp
