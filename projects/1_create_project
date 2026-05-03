@@ -52,6 +52,12 @@ interface $SERVICE_NAME {
         UInt32 var2
     }
 
+    
+    enumeration EnumName {
+        CONSTANT_1
+        CONSTANT_2
+    }
+
     method fireAndForgetMethodName fireAndForget {
         in {
 			String var1
