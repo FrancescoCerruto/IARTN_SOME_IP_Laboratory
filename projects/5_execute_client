@@ -7,15 +7,15 @@ if [ "$LAB_LOADED" != "true" ]; then
     exit 1
 fi
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -ne 3 ]; then
     echo "Error: not enough arguments."
-    echo "$0 <ServiceName> <ServiceFolder>"
-    echo "Example: $0 HelloWorld rpc/Instance_1"
+    echo "$0 <ServiceName> <ServiceFolder> <ServiceInstance>"
+    echo "Example: $0 HelloWorld rpc 1"
     exit 1
 fi
 
 SERVICE_NAME=$1
-FOLDER_NAME=$2
+FOLDER_NAME="$2/Instance_${3}"
 
 ABS_PROJECT_PATH=$(realpath "$FOLDER_NAME")
 
@@ -36,10 +36,10 @@ if [ ! -f "$BINARY_PATH" ]; then
     exit 1
 fi
 
-echo "Running ${SERVICE_NAME}Client..."
+echo "Running ${SERVICE_NAME}_Instance_${3}_Client..."
 
 COMMONAPI_CONFIG="$CONFIG_PATH" \
 VSOMEIP_CONFIGURATION="$ABS_PROJECT_PATH/vsomeip_client.json" \
-VSOMEIP_APPLICATION_NAME="${SERVICE_NAME}_client" \
+VSOMEIP_APPLICATION_NAME="${SERVICE_NAME}_Instance_${3}_client" \
 LD_LIBRARY_PATH="$INSTALL_LIB_PATH:$BUILD_LIB_PATH:$LD_LIBRARY_PATH" \
 "$BINARY_PATH"

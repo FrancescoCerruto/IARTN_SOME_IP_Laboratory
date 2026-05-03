@@ -7,16 +7,26 @@ if [ "$LAB_LOADED" != "true" ]; then
     exit 1
 fi
 
-if [ "$#" -ne 3 ]; then
-    echo "Error: not enough arguments."
-    echo "$0 <ServiceName> <ServiceFolder> <PackageDirectory>"
-    echo "Example: $0 HelloWorld rpc/Instance_1 v0/commonapi/examples"
+if [ "$#" < 3 ]; then
+    echo "Usage: $0 <ServiceName> <ServiceFolder> <NumServiceInstances>"
+    echo "Example: $0 HelloWorld rpc 1"
     exit 1
 fi
 
 SERVICE_NAME=$1
-PRJ_DIR="$PROJ_ROOT/$2"
-PACKAGE=$3
+SERVICE_FOLDER=$2
+NUM_INSTANCES=$3
+
+if [ "$#" == 4 ]; then
+	PACKAGE=$4
+else
+	PACKAGE="v1/iartn/someip/lab"
+fi
+
+for i in $(seq 1 $NUM_INSTANCES); do
+
+PRJ_DIR="${PROJ_ROOT}/${SERVICE_FOLDER}/Instance_${i}"
+
 OUTPUT_FILE="${PRJ_DIR}/CMakeLists.txt"
 
 
@@ -190,3 +200,5 @@ target_link_libraries(\${PRJ_NAME}-someip CommonAPI-SomeIP)
 EOF
 
 echo "$OUTPUT_FILE successfully written."
+
+done

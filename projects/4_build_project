@@ -7,15 +7,21 @@ if [ "$LAB_LOADED" != "true" ]; then
     exit 1
 fi
 
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 2 ]; then
     echo "Error: not enough arguments."
-    echo "$0 <ServiceFolder>"
-    echo "Example: $0 rpc/Instance_1"
+    echo "$0 <ServiceFolder> <NumServiceInstances>"
+    echo "Example: $0 rpc 1"
     exit 1
 fi
 
-DEST_DIR=$1
+for i in $(seq 1 $NUM_INSTANCES); do
+
+DEST_DIR="${1}/Instance_${i}"
 
 cd $DEST_DIR 
 cmake -Bbuild -DCMAKE_PREFIX_PATH=$INST_LIB_FOLDER -DPKG_CONFIG_USE_CMAKE_PREFIX_PATH=ON -DDBus1_DIR="$SRC_LIB_FOLDER/dbus-1.12.16/cmake" .
 cmake --build build
+
+cd ..
+
+done
