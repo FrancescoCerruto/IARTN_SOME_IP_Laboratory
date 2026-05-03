@@ -218,8 +218,11 @@ IARTN_SOME_IP_Laboratory/
 
 The **1_create_project** parametrized script will automatically generate both the fidl and src folder with the skeleton of the relevant files
 ```bash
-./1_create_project <ServiceName> <ServiceFolder> <NumServiceInstances>
+./1_create_project <ServiceName> <ServiceFolder> <NumServiceInstances> [<ServicePackage> (opt)] 
 ```
+
+> [!WARNING]
+> * The script specifies as ServicePackage the default value of "iartn.someip.lab". If a different ServicePackage is needed, you should specify it as additional parameter
 
 > [!WARNING]
 > Service names must NOT contain spaces
@@ -323,21 +326,24 @@ In the projects folder there are several scripts to simplify the generation and 
 > ```bash
 > #!/bin/bash
 > set -e
-> ./2_generate_project <ServiceName> <ServiceFolder>
-> ./3_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
-> ./4_build_project <ServiceFolder>
+> ./2_generate_project <ServiceName> <ServiceFolder> <NumServiceInstances>
+> ./3_generate_cmake <ServiceName> <ServiceFolder> <NumServiceInstances> [<PackageDirectory> (opt)]
+> ./4_build_project <ServiceFolder> <NumServiceInstances>
 >  ```
 * **1_generate_project**: this script invokes the CommonAPI generators
 ```bash
-./2_generate_project <ServiceName> <ServiceFolder>
+./2_generate_project <ServiceName> <ServiceFolder> <NumServiceInstances>
 ```
 * **2_generate_cmake**: both the libraries and projects are linked with cmake files. This parametrized script creates a custom cmake file for the provided project
 ```bash
-./3_generate_cmake <ServiceName> <ServiceFolder> <PackageDirectory>
+./3_generate_cmake <ServiceName> <ServiceFolder> <NumServiceInstances> [<PackageDirectory> (opt)]
 ```
+> [!WARNING]
+> * The script specifies as PackageDirectory the default value of "v1/iartn/someip/lab". If a different PackageDirectory is needed, you should specify it as additional parameter
+
 * **3_build_project**: this parametrized script builds the project and link the executable to the CommonAPI and vsomeip libraries
 ```bash
-./4_build_project <ServiceFolder>
+./4_build_project <ServiceFolder> <NumServiceInstances>
 ```
 
 ---
@@ -351,5 +357,5 @@ For each service, SOME/IP client and SOME/IP server must run on different machin
 
 To run the client/server instance of the service, execute the related script
 ```bash
-./5_execute_<client/service> <ServiceName> <ServiceFolder>
+./5_execute_<client/service> <ServiceName> <ServiceFolder> <ServiceInstance>
 ```

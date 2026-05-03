@@ -2,8 +2,8 @@
 
 set -e
 
-# Check if both arguments are provided
-if [ "$#" -ne 3 ]; then
+# Check if all the required arguments are provided
+if [ "$#" < 3 ]; then
     echo "Usage: $0 <ServiceName> <ServiceFolder> <NumServiceInstances>"
     echo "Example: $0 HelloWorld rpc 1"
     exit 1
@@ -12,7 +12,12 @@ fi
 SERVICE_NAME=$1
 SERVICE_FOLDER=$2
 NUM_INSTANCES=$3
-SERVICE_PACKAGE="iartn.someip.lab"
+
+if [ "$#" == 4 ]; then
+	SERVICE_PACKAGE=$4
+else
+	SERVICE_PACKAGE="iartn.someip.lab"
+fi
 
 PACKAGE_NAMESPACE="v1::${SERVICE_PACKAGE//./::}"
 NAMESPACE_DIR="v1/${SERVICE_PACKAGE//.//}"
