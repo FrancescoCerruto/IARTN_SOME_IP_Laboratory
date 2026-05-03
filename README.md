@@ -242,8 +242,8 @@ SomeIpUnicastAddress = "SERVER_IP_ADDRESS"
 Inside the **vsomeip_client.json** and **vsomeip_server.json** file
 ```bash
 "unicast" : "YOUR_IP_ADDRESS",
-"routing" : "<ServiceName>_server", // for server
-"routing" : "<ServiceName>_client", // for client
+"routing" : "<ServiceName>_Instance_<x>_server", // for server
+"routing" : "<ServiceName>_Instance_<x>_client", // for client
 ```
 Inside the **vsomeip_server.json** file
 ```bash
@@ -262,7 +262,7 @@ Inside the **vsomeip_server.json** file
 > ```bash
 >  "applications" : [
 >        {
->            "name" : "...",
+>            "name" : "<ServiceName>_Instance_<x>_<client/server>"
 >            "id" : "3333"  <-- it must be unique
 >        }
 >    ],
@@ -270,7 +270,7 @@ Inside the **vsomeip_server.json** file
 
 > [!WARNING]
 > * You must enable only one application as routing manager for each machine (it does not matter which application will be the routing manager). The other applications will use the single routing manager (it must be specified the name) as routing manager
-> - The someip.json file of the routing manager must contains, in this case, all the name of the applications and all the services (offered and searched)' parameters 
+> - The vsomeip.json file of the routing manager must contains, in this case, all the name of the applications and all the services' parameters 
 > ```bash
 >  //vsomeip.json file for the routing manager (e.g., service Bob)
 >  "applications" : [ <-- it must contain all the applications (both clients and servers) running on the machine
@@ -288,7 +288,7 @@ Inside the **vsomeip_server.json** file
 >    ],
 >  "routing" : "Bob",
 >  ```
-> - The someip.json file of the other applications should contain only both their application name and service (offered and searched)' parameters. In addition, the file must specify the routing manager
+> - The vsomeip.json file of the other applications should contain only both their application's name and service's parameters. In addition, the file must specify the routing manager
 > ```bash
 >  //vsomeip.json file for a non-routing manager application (e.g., service Alice)
 >  "applications" : [ <-- my application name and ID
@@ -346,7 +346,7 @@ In the projects folder there are several scripts to simplify the generation and 
 ### 4. Project execution
 For each service, SOME/IP client and SOME/IP server must run on different machines
 *  By default the CommonAPI framework assumes that both client and server run on the same machine
-*  If you run client and server on the same machine, by default they will communicate through UNIX sockets
+*  If you run client and server on the same machine, by default they will communicate through IPC
 > [!WARNING]
 > Both client and server machines must be on the same subnet
 
