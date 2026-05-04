@@ -39,6 +39,13 @@ This repository provides a complete workflow to:
 
 ---
 
+## 🖥️ LAB setup
+
+- Wi-Fi SSID: IARTN_SOME_IP_Lab
+- Wi-Fi password: iartn_2025_2026
+
+---
+
 ## ⚠️ IMPORTANT RULES (READ CAREFULLY)
 
 > [!WARNING]
