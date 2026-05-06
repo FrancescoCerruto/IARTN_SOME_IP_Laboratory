@@ -22,7 +22,7 @@ cd ${PRJ_DIR}
 
 for i in $(seq 1 $NUM_INSTANCES); do
 
-PRJ_DIR="Instance_${NUM_INSTANCES}"
+PRJ_DIR="Instance_${i}"
 
 if [ ! -d "$PRJ_DIR" ]; then
     echo "Folder $PRJ_DIR does not exist. Error"
